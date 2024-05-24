@@ -1,7 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { testRouter } from "./app/modules/boilerModule/test.route";
+
 import { userRouter } from "./app/modules/user/user.route";
 
 const app: Application = express();
@@ -11,7 +11,7 @@ app.use(cors());
 app.use(morgan("dev"));
 
 // ! rouutes
-app.use("/api", testRouter);
+
 app.use("/api", userRouter);
 
 app.get("/", async (req: Request, res: Response, next: NextFunction) => {

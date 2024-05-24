@@ -1,11 +1,10 @@
 import express from "express";
+import { userController } from "./user.controller";
 
 const router = express.Router();
 
 // ! for creating a studennt
-router.post("/users/create-student", async (req, res) => {
-  res.send({ message: "create struudent !! " });
-});
+router.post("/users/create-student", userController.createStudent);
 
 // ! for creating a faculty
 router.post("/users/create-faculty", async (req, res) => {

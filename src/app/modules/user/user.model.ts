@@ -1,10 +1,13 @@
+import bcrypt from "bcrypt";
 import mongoose, { Schema } from "mongoose";
 import { Tuser } from "./user.interface";
+import config from "../../config";
 
 const userSchema = new Schema<Tuser>(
   {
     id: {
       type: String,
+      unique: true,
     },
     password: {
       type: String,
@@ -30,4 +33,15 @@ const userSchema = new Schema<Tuser>(
   { timestamps: true }
 );
 
-export const userModel = mongoose.model("User", userSchema);
+userSchema.pre("save", async function name(next) {
+  const user = this;
+
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds)
+  );
+
+  next();
+});
+
+export const userModel = mongoose.model<Tuser>("User", userSchema);
