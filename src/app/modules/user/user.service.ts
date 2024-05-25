@@ -9,7 +9,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
 
   userData.password = password || (config.defaultPassword as string);
   userData.role = "student";
-  userData.id = "22103018";
+  userData.id = "22103019";
 
   // ! create a user
   const newUser = await userModel.create(userData);

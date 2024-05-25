@@ -3,6 +3,9 @@ import cors from "cors";
 import morgan from "morgan";
 
 import { userRouter } from "./app/modules/user/user.route";
+import globalErrorHandler from "./app/middleware/globalErrorHandler";
+import httpStatus from "http-status";
+import mainRouter from "./app/routes";
 
 const app: Application = express();
 
@@ -12,7 +15,7 @@ app.use(morgan("dev"));
 
 // ! rouutes
 
-app.use("/api", userRouter);
+app.use("/api", mainRouter);
 
 app.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,8 +25,14 @@ app.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+//! not found route
 app.all("*", async (req: Request, res: Response) => {
-  res.status(400).json({ success: false, message: "Route not found " });
+  res
+    .status(httpStatus.NOT_FOUND)
+    .json({ success: false, message: "Route not found " });
 });
+
+// !global error handler
+app.use(globalErrorHandler);
 
 export default app;

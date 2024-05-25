@@ -33,7 +33,7 @@ const userSchema = new Schema<Tuser>(
   { timestamps: true }
 );
 
-userSchema.pre("save", async function name(next) {
+userSchema.pre("save", async function (next) {
   const user = this;
 
   user.password = await bcrypt.hash(
@@ -41,6 +41,11 @@ userSchema.pre("save", async function name(next) {
     Number(config.bcrypt_salt_rounds)
   );
 
+  next();
+});
+
+userSchema.post("save", function (doc, next) {
+  doc.password = "";
   next();
 });
 
