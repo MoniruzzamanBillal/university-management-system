@@ -20,7 +20,7 @@ const createStudentIntoDB = (password, studentData) => __awaiter(void 0, void 0,
     const userData = {};
     userData.password = password || config_1.default.defaultPassword;
     userData.role = "student";
-    userData.id = "22103018";
+    userData.id = "22103019";
     // ! create a user
     const newUser = yield user_model_1.userModel.create(userData);
     // create a student

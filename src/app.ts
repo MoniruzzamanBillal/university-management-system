@@ -15,7 +15,7 @@ app.use(morgan("dev"));
 
 // ! rouutes
 
-app.use("/api", mainRouter);
+app.use("/api/v1", mainRouter);
 
 app.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
