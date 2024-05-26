@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { userRouter } from "../modules/user/user.route";
 import { StudentRouter } from "../modules/student/student.route";
+import { academicSemesterRouter } from "../modules/academicSemester/academicSemester.route";
 
-const mainRouter = Router();
+const router = Router();
 
 const modularRouter = [
   {
@@ -13,10 +14,14 @@ const modularRouter = [
     path: "/students",
     route: StudentRouter,
   },
+  {
+    path: "/academic-semester",
+    route: academicSemesterRouter,
+  },
 ];
 
 modularRouter.forEach((route) => {
-  mainRouter.use(route.path, route.route);
+  router.use(route.path, route.route);
 });
 
-export default mainRouter;
+export const mainRouter = router;

@@ -1,13 +1,8 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
 import { userServices } from "./user.service";
 import sendResponse from "../../util/sendResponse";
 import httpStatus from "http-status";
-
-const catchAsync = (func: RequestHandler) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(func(req, res, next)).catch((error) => next(error));
-  };
-};
+import catchAsync from "../../util/catchAsync";
+import { userModel } from "./user.model";
 
 // ! function for creating a student
 const createStudent = catchAsync(async (req, res) => {
@@ -33,9 +28,21 @@ const createAdmin = catchAsync(async (req, res) => {
   const data = req.body;
 });
 
+// ! for getting all users
+const getAllUser = catchAsync(async (req, res) => {
+  const result = await userModel.find();
+  sendResponse(res, {
+    status: httpStatus.OK,
+    success: true,
+    message: "retrived all users ",
+    data: result,
+  });
+});
+
 //
 export const userController = {
   createStudent,
   createFaculty,
   createAdmin,
+  getAllUser,
 };
