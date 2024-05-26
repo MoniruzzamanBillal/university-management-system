@@ -32,7 +32,7 @@ app.all("*", async (req: Request, res: Response) => {
     .json({ success: false, message: "Route not found " });
 });
 
-// !global error handler
+//! global error handler
 app.use(globalErrorHandler);
 
 export default app;
