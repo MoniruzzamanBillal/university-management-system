@@ -8,6 +8,14 @@ const createSemesterintoDb = async (paload: Tacademicsemester) => {
     throw new Error("Invalid semester!!");
   }
 
+  const isSemesterExist = await academicSemesterModel.findOne({
+    name: paload.name,
+  });
+
+  if (isSemesterExist) {
+    throw new Error("Semester already exist !! ");
+  }
+
   const res = await academicSemesterModel.create(paload);
   return res;
 };

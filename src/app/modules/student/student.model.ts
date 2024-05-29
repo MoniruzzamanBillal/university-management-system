@@ -5,6 +5,8 @@ import {
   TStudent,
   TUserName,
 } from "./student.interface";
+import AppError from "../../Error/AppError";
+import httpStatus from "http-status";
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -137,6 +139,11 @@ const studentSchema = new Schema<TStudent>(
       type: Schema.Types.ObjectId,
       ref: "AcademicSemmester",
     },
+    AcademicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: "AcademicDepartment",
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,
@@ -144,5 +151,33 @@ const studentSchema = new Schema<TStudent>(
   },
   { timestamps: true }
 );
+
+studentSchema.pre("save", async function (next) {
+  const isStudentExist = await StudentModel.findOne({
+    email: this.email,
+    id: this.id,
+  });
+
+  if (isStudentExist) {
+    throw new AppError(
+      httpStatus.NOT_MODIFIED,
+      "Student already exist with same email or ID !!"
+    );
+  }
+
+  next();
+});
+
+studentSchema.pre("findOneAndUpdate", async function (next) {
+  const query = this.getQuery();
+
+  const studentData = await StudentModel.findOne(query);
+
+  if (studentData?.isDeleted) {
+    return next(new AppError(httpStatus.BAD_REQUEST, "User don't exist "));
+  }
+
+  next();
+});
 
 export const StudentModel = mongoose.model("Student", studentSchema);

@@ -1,8 +1,18 @@
+import httpStatus from "http-status";
+import AppError from "../../Error/AppError";
 import { TacademicDepartment } from "./academicDepartment.interface";
 import { academicDepartmentModel } from "./academicDepartment.model";
 
 // ! create academic department into DB
 const createAcademicDepartmentIntoDB = async (payload: TacademicDepartment) => {
+  const isDeptExist = await academicDepartmentModel.findOne({
+    name: payload.name,
+  });
+
+  if (isDeptExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Department already exist!!");
+  }
+
   const result = await academicDepartmentModel.create(payload);
 
   return result;
@@ -10,13 +20,17 @@ const createAcademicDepartmentIntoDB = async (payload: TacademicDepartment) => {
 
 // ! get all academic data from DB
 const getAllAcademicDepartment = async () => {
-  const result = await academicDepartmentModel.find();
+  const result = await academicDepartmentModel
+    .find()
+    .populate("academicFaculty");
   return result;
 };
 
 // ! get specific academic data from DB
 const getAcademicDepartment = async (id: string) => {
-  const result = await academicDepartmentModel.findOne({ _id: id });
+  const result = await academicDepartmentModel
+    .findOne({ _id: id })
+    .populate("academicFaculty");
   return result;
 };
 
