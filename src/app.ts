@@ -2,7 +2,6 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 
-import { userRouter } from "./app/modules/user/user.route";
 import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
 import { mainRouter } from "./app/routes";

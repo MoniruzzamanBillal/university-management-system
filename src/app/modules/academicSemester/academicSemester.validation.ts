@@ -27,10 +27,21 @@ const createAcademicSemesterSchema = z.object({
   }),
 });
 
+const updatedAcademicSemesterSchemaValidationSchema = z.object({
+  body: z.object({
+    name: academicSemesterNameSchema.optional(),
+    code: academicSemesterCodeSchema.optional(),
+    year: z.string().optional(),
+    startMonth: monthsSchema.optional(),
+    endMonth: monthsSchema.optional(),
+  }),
+});
+
 //! Export the schemas
 export const academicSemesterZodSchemas = {
   createAcademicSemesterSchema,
   monthsSchema,
   academicSemesterNameSchema,
   academicSemesterCodeSchema,
+  updatedAcademicSemesterSchemaValidationSchema,
 };
