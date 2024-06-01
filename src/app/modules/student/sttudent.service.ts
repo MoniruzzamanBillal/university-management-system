@@ -3,6 +3,7 @@ import { StudentModel } from "./student.model";
 import AppError from "../../Error/AppError";
 import httpStatus from "http-status";
 import { userModel } from "../user/user.model";
+import { TStudent } from "./student.interface";
 
 const getAllStudentsFromDB = async () => {
   const result = await StudentModel.find()
@@ -63,7 +64,6 @@ const deleteStudentFromDB = async (id: string) => {
     return deleteStudent;
     //
   } catch (error) {
-    console.log(error);
     await session.abortTransaction();
     await session.endSession();
     throw new AppError(
@@ -73,8 +73,40 @@ const deleteStudentFromDB = async (id: string) => {
   }
 };
 
+const updateStudentFromDb = async (id: string, payload: Partial<TStudent>) => {
+  const { name, localGuardian, guardian, ...remainingStudentData } = payload;
+
+  const modifiedData: Record<string, unknown> = {
+    ...remainingStudentData,
+  };
+
+  if (name && Object.keys(name).length) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedData[`name.${key}`] = value;
+    }
+  }
+  if (localGuardian && Object.keys(localGuardian).length) {
+    for (const [key, value] of Object.entries(localGuardian)) {
+      modifiedData[`localGuardian.${key}`] = value;
+    }
+  }
+  if (guardian && Object.keys(guardian).length) {
+    for (const [key, value] of Object.entries(guardian)) {
+      modifiedData[`guardian.${key}`] = value;
+    }
+  }
+
+  const result = StudentModel.findOneAndUpdate({ id }, modifiedData, {
+    new: true,
+    runValidators: true,
+  });
+
+  return result;
+};
+
 export const StudentServices = {
   getAllStudentsFromDB,
   getSingleStudentFromDB,
   deleteStudentFromDB,
+  updateStudentFromDb,
 };

@@ -15,16 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const user_controller_1 = require("./user.controller");
+const student_validation_1 = require("../student/student.validation");
+const validaateRequest_1 = __importDefault(require("../../middleware/validaateRequest"));
 const router = express_1.default.Router();
 // ! for creating a studennt
-router.post("/users/create-student", user_controller_1.userController.createStudent);
+router.post("/create-student", (0, validaateRequest_1.default)(student_validation_1.studentValidations.createStudentValidationSchema), user_controller_1.userController.createStudent);
 // ! for creating a faculty
-router.post("/users/create-faculty", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/create-faculty", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send({ message: "create struudent !! " });
 }));
 // ! for creating a admin
-router.post("/users/create-admin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/create-admin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send({ message: "create struudent !! " });
 }));
+// ! for getting all student data
+router.get("/", user_controller_1.userController.getAllUser);
 //
 exports.userRouter = router;

@@ -1,16 +1,10 @@
 import mongoose, { Schema } from "mongoose";
-import {
-  TacademicSemesterCode,
-  TacademicSemesterName,
-  Tacademicsemester,
-  Tmonths,
-} from "./academicSemester.interface";
+import { Tacademicsemester } from "./academicSemester.interface";
 import {
   academicSemesterCode,
   academicSemesterName,
   months,
 } from "./academicSemester.constant";
-import { strict } from "assert";
 
 const academicSemesterSchema = new Schema<Tacademicsemester>(
   {

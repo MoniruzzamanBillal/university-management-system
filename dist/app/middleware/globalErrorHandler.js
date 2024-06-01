@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const globalErrorHandler = (error, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(500).json({
+    const status = error.status || 500;
+    return res.status(status).json({
         success: false,
         message: error.message || "Something went wrong!!",
         error,

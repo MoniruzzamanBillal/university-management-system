@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, mongo } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import {
   TGuardian,
   TLocalGuardian,

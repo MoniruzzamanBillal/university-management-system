@@ -16,49 +16,46 @@ exports.userController = void 0;
 const user_service_1 = require("./user.service");
 const sendResponse_1 = __importDefault(require("../../util/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
+const catchAsync_1 = __importDefault(require("../../util/catchAsync"));
+const user_model_1 = require("./user.model");
+const AppError_1 = __importDefault(require("../../Error/AppError"));
 // ! function for creating a student
-const createStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { password, student: studentData } = req.body;
-        const result = yield user_service_1.userServices.createStudentIntoDB(password, studentData);
-        (0, sendResponse_1.default)(res, {
-            status: http_status_1.default.OK,
-            success: true,
-            message: "New student created successfully !!",
-            data: result,
-        });
+const createStudent = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { password, student: studentData } = req.body;
+    const result = yield user_service_1.userServices.createStudentIntoDB(password, studentData);
+    console.log(result);
+    if (!result) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "something went wrong , can't create student !!");
     }
-    catch (error) {
-        res
-            .status(400)
-            .json({ success: false, message: error.message, error: error });
-    }
-});
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "New student created successfully !!",
+        data: result,
+    });
+}));
 // ! function for creating a faculty
-const createFaculty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const data = req.body;
-    }
-    catch (error) {
-        res
-            .status(400)
-            .json({ success: false, message: error.message, error: error });
-    }
-});
+const createFaculty = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = req.body;
+}));
 // ! function for creating an admin
-const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const data = req.body;
-    }
-    catch (error) {
-        res
-            .status(400)
-            .json({ success: false, message: error.message, error: error });
-    }
-});
+const createAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = req.body;
+}));
+// ! for getting all users
+const getAllUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.userModel.find();
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "retrived all users ",
+        data: result,
+    });
+}));
 //
 exports.userController = {
     createStudent,
     createFaculty,
     createAdmin,
+    getAllUser,
 };
