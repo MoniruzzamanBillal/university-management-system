@@ -2,11 +2,12 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { TerrorSource } from "../interface/error";
 import config from "../config";
-import { handleZodError } from "../Error/handleZodError";
+
 import { handleValidationError } from "../Error/handleValidationError";
 import { handleCastError } from "../Error/handleCastError";
 import { handleDuplicateError } from "../Error/handleDuplicateError";
 import AppError from "../Error/AppError";
+import { handleZodError } from "../Error/handleZodError";
 
 const globalErrorHandler: ErrorRequestHandler = async (
   error,

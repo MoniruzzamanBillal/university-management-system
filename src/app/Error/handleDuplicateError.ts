@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import { TerrorSource, TgenericResponse } from "../interface/error";
 
-export const handleDuplicateError = (error): TgenericResponse => {
+export const handleDuplicateError = (error: any): TgenericResponse => {
   const regex = /name:\s*"([^"]+)"/;
   const match = error.message.match(regex);
 
