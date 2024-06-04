@@ -20,7 +20,7 @@ const getAllDataFromDb = async (query: Record<string, unknown>) => {
     .fields();
 
   const result = await courseQuery.queryModel.populate(
-    "preRequisiteCourseSchema.course"
+    "preRequisiteCourses.course"
   );
 
   return result;

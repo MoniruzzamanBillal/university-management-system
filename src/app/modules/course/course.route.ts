@@ -10,7 +10,7 @@ router.post(
   validateRequest(courseValidations.createCourseValidationSchema),
   courseContriollers.createCourse
 );
-router.get("/course", courseContriollers.getAllCourses);
+router.get("/courses", courseContriollers.getAllCourses);
 router.get("/course/:id", courseContriollers.getCourse);
 router.delete("/course/:id", courseContriollers.deleteCourse);
 
