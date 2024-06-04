@@ -16,10 +16,12 @@ const courseSchema = new Schema<TCourse>({
   title: {
     type: String,
     required: [true, "Course title is required "],
+    trim: true,
   },
   prefix: {
     type: String,
     required: [true, "Course prefix is required "],
+    trim: true,
   },
   code: {
     type: Number,
@@ -29,6 +31,10 @@ const courseSchema = new Schema<TCourse>({
   credit: {
     type: Number,
     required: [true, "Course credit is required "],
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
   preRequisiteCourses: [preRequisiteCourseSchema],
 });

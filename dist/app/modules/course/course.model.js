@@ -28,6 +28,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const preRequisiteCourseSchema = new mongoose_1.Schema({
     course: {
         type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Course",
     },
     isDeleted: {
         type: Boolean,
@@ -46,6 +47,7 @@ const courseSchema = new mongoose_1.Schema({
     code: {
         type: Number,
         required: [true, "Course code is required "],
+        unique: true,
     },
     credit: {
         type: Number,

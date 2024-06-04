@@ -18,7 +18,7 @@ export const handleDuplicateError = (error: any): TgenericResponse => {
 
   return {
     statusCode,
-    message: " ",
+    message: error?.message,
     errorSources,
   };
 };

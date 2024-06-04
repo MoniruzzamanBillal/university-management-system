@@ -40,7 +40,7 @@ const getAllDataFromDb = (query) => __awaiter(void 0, void 0, void 0, function* 
         .sort()
         .paginate()
         .fields();
-    const result = yield courseQuery.queryModel.populate("preRequisiteCourseSchema.course");
+    const result = yield courseQuery.queryModel.populate("preRequisiteCourses.course");
     return result;
 });
 // ! get single course data

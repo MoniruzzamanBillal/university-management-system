@@ -28,7 +28,9 @@ const getAllDataFromDb = async (query: Record<string, unknown>) => {
 
 // ! get single course data
 const getCourseDataFromDb = async (id: string) => {
-  const result = await courseModel.findById(id);
+  const result = await courseModel
+    .findById(id)
+    .populate("preRequisiteCourses.course");
 
   return result;
 };
@@ -38,7 +40,8 @@ const updateCourseDataIntoDb = async (
   id: string,
   payload: Partial<TCourse>
 ) => {
-  const { ...remainingData } = payload;
+  const { preRequisiteCourses, ...remainingData } = payload;
+
   const modifiedData: Record<string, unknown> = {
     ...remainingData,
   };
