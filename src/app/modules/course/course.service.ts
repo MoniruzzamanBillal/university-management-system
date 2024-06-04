@@ -1,7 +1,10 @@
+import mongoose from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { courseSearchableField } from "./course.constant";
 import { TCourse } from "./course.interface.";
 import { courseModel } from "./course.model";
+import AppError from "../../Error/AppError";
+import httpStatus from "http-status";
 
 //! create course in DB
 const createCourseIntoDb = async (payload: TCourse) => {
@@ -40,56 +43,99 @@ const updateCourseDataIntoDb = async (
   id: string,
   payload: Partial<TCourse>
 ) => {
-  const { preRequisiteCourses, ...remainingData } = payload;
+  const session = await mongoose.startSession();
 
-  const modifiedData: Record<string, unknown> = {
-    ...remainingData,
-  };
+  try {
+    session.startTransaction();
 
-  // console.log(preRequisiteCourses);
-  // ! check any prerequuisit course
-  if (preRequisiteCourses && preRequisiteCourses.length) {
-    //*    deleting prerequisite process
-    const deletePrerequisits = preRequisiteCourses
-      .filter((element) => element.course && element.isDeleted)
-      .map((ele) => ele.course);
+    const { preRequisiteCourses, ...remainingData } = payload;
 
-    const deleteCourses = await courseModel.findByIdAndUpdate(id, {
-      $pull: {
-        preRequisiteCourses: {
-          course: { $in: deletePrerequisits },
+    const modifiedData: Record<string, unknown> = {
+      ...remainingData,
+    };
+
+    // console.log(preRequisiteCourses);
+    // ! check any prerequuisit course
+    if (preRequisiteCourses && preRequisiteCourses.length) {
+      //*    deleting prerequisite process
+      const deletePrerequisits = preRequisiteCourses
+        .filter((element) => element.course && element.isDeleted)
+        .map((ele) => ele.course);
+
+      const deleteCourse = await courseModel.findByIdAndUpdate(
+        id,
+        {
+          $pull: {
+            preRequisiteCourses: {
+              course: { $in: deletePrerequisits },
+            },
+          },
         },
-      },
-    });
+        { new: true, runValidators: true, session }
+      );
 
-    //*    adding  prerequisite process
-    const addPrerequisits = preRequisiteCourses.filter(
-      (element) => element.course && !element.isDeleted
+      if (!deleteCourse) {
+        throw new AppError(
+          httpStatus.NOT_MODIFIED,
+          "Failed to delete pre requisite courses !! "
+        );
+      }
+
+      //*    adding  prerequisite process
+      const addPrerequisits = preRequisiteCourses.filter(
+        (element) => element.course && !element.isDeleted
+      );
+
+      const addCourses = await courseModel.findByIdAndUpdate(
+        id,
+        {
+          $addToSet: {
+            preRequisiteCourses: { $each: addPrerequisits },
+          },
+        },
+        { new: true, runValidators: true, session }
+      );
+
+      if (!addCourses) {
+        throw new AppError(
+          httpStatus.NOT_MODIFIED,
+          "Failed to Add pre requisite courses !! "
+        );
+      }
+    }
+
+    //* genereal field update
+    const generalUpdate = await courseModel.findByIdAndUpdate(
+      id,
+      modifiedData,
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
     );
 
-    console.log(addPrerequisits);
-
-    const addCourses = await courseModel.findByIdAndUpdate(id, {
-      $addToSet: {
-        preRequisiteCourses: { $each: addPrerequisits },
-      },
-    });
-  }
-
-  const generalFieldUpdate = await courseModel.findByIdAndUpdate(
-    id,
-    modifiedData,
-    {
-      new: true,
-      runValidators: true,
+    if (!generalUpdate) {
+      throw new AppError(
+        httpStatus.NOT_MODIFIED,
+        "Failed to update general course data  !! "
+      );
     }
-  );
 
-  const result = await courseModel
-    .findById(id)
-    .populate("preRequisiteCourses.course");
+    const result = await courseModel
+      .findById(id)
+      .populate("preRequisiteCourses.course");
 
-  return result;
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error: any) {
+    console.log(error);
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error("unsuccessfull updation of course !!");
+  }
 };
 
 // ! delete course data
