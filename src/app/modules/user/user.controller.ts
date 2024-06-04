@@ -12,13 +12,6 @@ const createStudent = catchAsync(async (req, res) => {
   const result = await userServices.createStudentIntoDB(password, studentData);
   console.log(result);
 
-  if (!result) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "something went wrong , can't create student !!"
-    );
-  }
-
   sendResponse(res, {
     status: httpStatus.OK,
     success: true,
@@ -29,14 +22,31 @@ const createStudent = catchAsync(async (req, res) => {
 
 // ! function for creating a faculty
 const createFaculty = catchAsync(async (req, res) => {
-  const data = req.body;
+  const { password, faculty: facultyData } = req.body;
+
+  const result = await userServices.createFacultyIntoDB(password, facultyData);
+
+  sendResponse(res, {
+    status: httpStatus.OK,
+    success: true,
+    message: "Faculty is created succesfully",
+    data: result,
+  });
 });
 
 // ! function for creating an admin
 const createAdmin = catchAsync(async (req, res) => {
-  const data = req.body;
-});
+  const { password, admin: adminData } = req.body;
 
+  const result = await userServices.createAdminIntoDB(password, adminData);
+
+  sendResponse(res, {
+    status: httpStatus.OK,
+    success: true,
+    message: "Admin is created succesfully",
+    data: result,
+  });
+});
 // ! for getting all users
 const getAllUser = catchAsync(async (req, res) => {
   const result = await userModel.find();

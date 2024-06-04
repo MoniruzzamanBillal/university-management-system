@@ -29,8 +29,16 @@ const student_model_1 = require("./student.model");
 const AppError_1 = __importDefault(require("../../Error/AppError"));
 const http_status_1 = __importDefault(require("http-status"));
 const user_model_1 = require("../user/user.model");
-const getAllStudentsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield student_model_1.StudentModel.find()
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const student_constant_1 = require("./student.constant");
+const getAllStudentsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const studentQuery = new QueryBuilder_1.default(student_model_1.StudentModel.find(), query)
+        .search(student_constant_1.studentSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const result = yield studentQuery.queryModel
         .populate("user")
         .populate("admissionSemester")
         .populate({
