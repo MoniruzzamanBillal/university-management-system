@@ -113,6 +113,7 @@ const adminSchema = new mongoose_1.Schema({
         default: false,
     },
 }, {
+    timestamps: true,
     toJSON: {
         virtuals: true,
     },
@@ -129,7 +130,7 @@ adminSchema.pre("findOne", function (next) {
 //!  checking if user is already exist!
 adminSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const isAdminExist = yield exports.adminModel.findOne({ _id: this.id });
+        const isAdminExist = yield exports.adminModel.findOne({ id: this.id });
         if (isAdminExist) {
             throw new Error("Admin already exist !! ");
         }

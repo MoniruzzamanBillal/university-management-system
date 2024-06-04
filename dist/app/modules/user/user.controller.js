@@ -18,15 +18,11 @@ const sendResponse_1 = __importDefault(require("../../util/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../util/catchAsync"));
 const user_model_1 = require("./user.model");
-const AppError_1 = __importDefault(require("../../Error/AppError"));
 // ! function for creating a student
 const createStudent = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { password, student: studentData } = req.body;
     const result = yield user_service_1.userServices.createStudentIntoDB(password, studentData);
     console.log(result);
-    if (!result) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "something went wrong , can't create student !!");
-    }
     (0, sendResponse_1.default)(res, {
         status: http_status_1.default.OK,
         success: true,

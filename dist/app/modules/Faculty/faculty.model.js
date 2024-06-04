@@ -86,7 +86,7 @@ const facultySchema = new mongoose_1.Schema({
         },
         required: [true, "Gender is required"],
     },
-    dateOfBirth: { type: Date },
+    dateOfBirth: { type: String },
     email: {
         type: String,
         required: [true, "Email is required"],
@@ -115,35 +115,18 @@ const facultySchema = new mongoose_1.Schema({
     profileImg: { type: String },
     academicDepartment: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: [true, "User id is required"],
-        ref: "User",
+        required: [true, "AcademicDepartment id is required"],
+        ref: "AcademicDepartment",
     },
     isDeleted: {
         type: Boolean,
         default: false,
     },
 }, {
+    timestamps: true,
     toJSON: {
         virtuals: true,
     },
-});
-// generating full name
-facultySchema.virtual("fullName").get(function () {
-    var _a, _b, _c;
-    return (((_a = this === null || this === void 0 ? void 0 : this.name) === null || _a === void 0 ? void 0 : _a.firstName) +
-        "" +
-        ((_b = this === null || this === void 0 ? void 0 : this.name) === null || _b === void 0 ? void 0 : _b.middleName) +
-        "" +
-        ((_c = this === null || this === void 0 ? void 0 : this.name) === null || _c === void 0 ? void 0 : _c.lastName));
-});
-//! filter out deleted documents
-facultySchema.pre("find", function (next) {
-    this.find({ isDeleted: { $ne: true } });
-    next();
-});
-facultySchema.pre("findOne", function (next) {
-    this.find({ isDeleted: { $ne: true } });
-    next();
 });
 //! checking if user is already exist!
 facultySchema.pre("save", function (next) {

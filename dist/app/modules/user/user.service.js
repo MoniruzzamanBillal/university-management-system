@@ -52,6 +52,7 @@ const createStudentIntoDB = (password, studentData) => __awaiter(void 0, void 0,
         if (!newStudent.length) {
             throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Student not created !! ");
         }
+        console.log(newStudent);
         yield session.commitTransaction();
         yield session.endSession();
         return newStudent;
@@ -59,6 +60,8 @@ const createStudentIntoDB = (password, studentData) => __awaiter(void 0, void 0,
     catch (error) {
         yield session.abortTransaction();
         yield session.endSession();
+        console.log(error);
+        throw new AppError_1.default(http_status_1.default.NOT_ACCEPTABLE, error);
     }
     //
 });
@@ -89,7 +92,6 @@ const createFacultyIntoDB = (password, payload) => __awaiter(void 0, void 0, voi
         // set id , _id as user
         payload.id = newUser[0].id;
         payload.user = newUser[0]._id; //reference _id
-        // create a faculty (transaction-2)
         const newFaculty = yield faculty_model_1.facultyModel.create([payload], { session });
         if (!newFaculty.length) {
             throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Failed to create faculty");

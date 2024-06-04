@@ -36,7 +36,6 @@ const facultySchema = new Schema<TFaculty>(
       unique: true,
       ref: "User",
     },
-
     designation: {
       type: String,
       required: [true, "Designation is required"],
