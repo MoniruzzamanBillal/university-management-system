@@ -52,7 +52,6 @@ const createStudentIntoDB = (password, studentData) => __awaiter(void 0, void 0,
         if (!newStudent.length) {
             throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Student not created !! ");
         }
-        console.log(newStudent);
         yield session.commitTransaction();
         yield session.endSession();
         return newStudent;

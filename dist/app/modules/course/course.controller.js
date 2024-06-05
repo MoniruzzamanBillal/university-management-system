@@ -50,6 +50,18 @@ const getCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         data: result,
     });
 }));
+// ! updating course from data
+const updateCourseInfo = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const data = req.body;
+    const result = yield course_service_1.courseServices.updateCourseDataIntoDb(id, data);
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "course data updated successfully !!",
+        data: result,
+    });
+}));
 // ! delete course data
 const deleteCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -61,10 +73,24 @@ const deleteCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
+// ! add faculty to course
+const assignFacultyToCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseId } = req.params;
+    const { faculties } = req.body;
+    const result = yield course_service_1.courseServices.assignFacultyWithCourseIntoDb(courseId, faculties);
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "Faculty added to course successfully !!",
+        data: result,
+    });
+}));
 //
 exports.courseContriollers = {
     createCourse,
     getAllCourses,
     getCourse,
     deleteCourse,
+    updateCourseInfo,
+    assignFacultyToCourse,
 };

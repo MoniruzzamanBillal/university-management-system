@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.courseModel = void 0;
+exports.courseFacultyModel = exports.courseModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const preRequisiteCourseSchema = new mongoose_1.Schema({
     course: {
@@ -39,10 +39,12 @@ const courseSchema = new mongoose_1.Schema({
     title: {
         type: String,
         required: [true, "Course title is required "],
+        trim: true,
     },
     prefix: {
         type: String,
         required: [true, "Course prefix is required "],
+        trim: true,
     },
     code: {
         type: Number,
@@ -53,6 +55,25 @@ const courseSchema = new mongoose_1.Schema({
         type: Number,
         required: [true, "Course credit is required "],
     },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
     preRequisiteCourses: [preRequisiteCourseSchema],
 });
 exports.courseModel = mongoose_1.default.model("Course", courseSchema);
+// !  course faculty model
+const courseFacultySchema = new mongoose_1.Schema({
+    course: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Course",
+        unique: true,
+    },
+    faculties: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Faculty",
+        },
+    ],
+});
+exports.courseFacultyModel = mongoose_1.default.model("CourseFaculty", courseFacultySchema);

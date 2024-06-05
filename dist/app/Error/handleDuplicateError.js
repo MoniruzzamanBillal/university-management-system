@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleDuplicateError = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const handleDuplicateError = (error) => {
-    const regex = /name:\s*"([^"]+)"/;
+    const regex = /\s*"([^"]+)"/;
     const match = error.message.match(regex);
     const extractedMessage = match && match[1];
     const errorSources = [
@@ -18,7 +18,7 @@ const handleDuplicateError = (error) => {
     const statusCode = http_status_1.default.BAD_REQUEST;
     return {
         statusCode,
-        message: " ",
+        message: error === null || error === void 0 ? void 0 : error.message,
         errorSources,
     };
 };

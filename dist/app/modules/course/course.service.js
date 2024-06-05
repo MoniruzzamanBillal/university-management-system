@@ -24,9 +24,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.courseServices = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const course_constant_1 = require("./course.constant");
 const course_model_1 = require("./course.model");
+const AppError_1 = __importDefault(require("../../Error/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 //! create course in DB
 const createCourseIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield course_model_1.courseModel.create(payload);
@@ -45,22 +48,80 @@ const getAllDataFromDb = (query) => __awaiter(void 0, void 0, void 0, function* 
 });
 // ! get single course data
 const getCourseDataFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield course_model_1.courseModel.findById(id);
+    const result = yield course_model_1.courseModel
+        .findById(id)
+        .populate("preRequisiteCourses.course");
     return result;
 });
 // ! update course data
 const updateCourseDataIntoDb = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const remainingData = __rest(payload, []);
-    const modifiedData = Object.assign({}, remainingData);
-    const result = yield course_model_1.courseModel.findByIdAndUpdate(id, modifiedData, {
-        new: true,
-        runValidators: true,
-    });
-    return result;
+    const session = yield mongoose_1.default.startSession();
+    try {
+        session.startTransaction();
+        const { preRequisiteCourses } = payload, remainingData = __rest(payload, ["preRequisiteCourses"]);
+        const modifiedData = Object.assign({}, remainingData);
+        // console.log(preRequisiteCourses);
+        // ! check any prerequuisit course
+        if (preRequisiteCourses && preRequisiteCourses.length) {
+            //*    deleting prerequisite process
+            const deletePrerequisits = preRequisiteCourses
+                .filter((element) => element.course && element.isDeleted)
+                .map((ele) => ele.course);
+            const deleteCourse = yield course_model_1.courseModel.findByIdAndUpdate(id, {
+                $pull: {
+                    preRequisiteCourses: {
+                        course: { $in: deletePrerequisits },
+                    },
+                },
+            }, { new: true, runValidators: true, session });
+            if (!deleteCourse) {
+                throw new AppError_1.default(http_status_1.default.NOT_MODIFIED, "Failed to delete pre requisite courses !! ");
+            }
+            //*    adding  prerequisite process
+            const addPrerequisits = preRequisiteCourses.filter((element) => element.course && !element.isDeleted);
+            const addCourses = yield course_model_1.courseModel.findByIdAndUpdate(id, {
+                $addToSet: {
+                    preRequisiteCourses: { $each: addPrerequisits },
+                },
+            }, { new: true, runValidators: true, session });
+            if (!addCourses) {
+                throw new AppError_1.default(http_status_1.default.NOT_MODIFIED, "Failed to Add pre requisite courses !! ");
+            }
+        }
+        //* genereal field update
+        const generalUpdate = yield course_model_1.courseModel.findByIdAndUpdate(id, modifiedData, {
+            new: true,
+            runValidators: true,
+            session,
+        });
+        if (!generalUpdate) {
+            throw new AppError_1.default(http_status_1.default.NOT_MODIFIED, "Failed to update general course data  !! ");
+        }
+        const result = yield course_model_1.courseModel
+            .findById(id)
+            .populate("preRequisiteCourses.course");
+        yield session.commitTransaction();
+        yield session.endSession();
+        return result;
+    }
+    catch (error) {
+        console.log(error);
+        yield session.abortTransaction();
+        yield session.endSession();
+        throw new Error("unsuccessfull updation of course !!");
+    }
 });
 // ! delete course data
 const deleteCourseFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield course_model_1.courseModel.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+});
+// ! assigning faculty into course
+const assignFacultyWithCourseIntoDb = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield course_model_1.courseFacultyModel.findByIdAndUpdate(id, {
+        course: id,
+        $addToSet: { faculties: { $each: payload } },
+    }, { upsert: true, new: true });
+    return result;
 });
 //
 exports.courseServices = {
@@ -69,4 +130,5 @@ exports.courseServices = {
     getCourseDataFromDb,
     updateCourseDataIntoDb,
     deleteCourseFromDb,
+    assignFacultyWithCourseIntoDb,
 };

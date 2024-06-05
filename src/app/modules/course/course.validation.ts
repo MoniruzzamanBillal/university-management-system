@@ -50,7 +50,7 @@ const updateCourseValidationSchema = z.object({
   }),
 });
 
-export const addFacultyValidationSchema = z.object({
+export const FacultyValidationSchema = z.object({
   body: z.object({
     course: z.string().optional(),
     faculties: z.array(z.string()),
@@ -61,5 +61,5 @@ export const addFacultyValidationSchema = z.object({
 export const courseValidations = {
   createCourseValidationSchema,
   updateCourseValidationSchema,
-  addFacultyValidationSchema,
+  FacultyValidationSchema,
 };
