@@ -73,6 +73,24 @@ const deleteCourse = catchAsync(async (req, res) => {
   });
 });
 
+// ! add faculty to course
+const assignFacultyToCourse = catchAsync(async (req, res) => {
+  const { courseId } = req.params;
+  const { faculties } = req.body;
+
+  const result = await courseServices.assignFacultyWithCourseIntoDb(
+    courseId,
+    faculties
+  );
+
+  sendResponse(res, {
+    status: httpStatus.OK,
+    success: true,
+    message: "Faculty added to course successfully !!",
+    data: result,
+  });
+});
+
 //
 export const courseContriollers = {
   createCourse,
@@ -80,4 +98,5 @@ export const courseContriollers = {
   getCourse,
   deleteCourse,
   updateCourseInfo,
+  assignFacultyToCourse,
 };

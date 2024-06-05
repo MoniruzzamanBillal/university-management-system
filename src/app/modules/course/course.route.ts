@@ -10,13 +10,18 @@ router.post(
   validateRequest(courseValidations.createCourseValidationSchema),
   courseContriollers.createCourse
 );
-router.get("/courses", courseContriollers.getAllCourses);
-router.get("/course/:id", courseContriollers.getCourse);
+router.get("/allCourses", courseContriollers.getAllCourses);
+router.get("/:id", courseContriollers.getCourse);
 router.patch(
-  "/course/:id",
+  "/:id",
   validateRequest(courseValidations.updateCourseValidationSchema),
   courseContriollers.updateCourseInfo
 );
-router.delete("/course/:id", courseContriollers.deleteCourse);
+router.put(
+  "/:courseId/assign-faculty",
+  validateRequest(courseValidations.addFacultyValidationSchema),
+  courseContriollers.assignFacultyToCourse
+);
+router.delete("/:id", courseContriollers.deleteCourse);
 
 export const courseRouter = router;
