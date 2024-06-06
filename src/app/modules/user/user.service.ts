@@ -17,7 +17,7 @@ import { academicDepartmentModel } from "../academicDepartment/academicDepartmen
 import { TFaculty } from "../Faculty/faculty.interface";
 import { facultyModel } from "../Faculty/faculty.model";
 
-//! function for creating a student inot database
+//! function for creating a student into database
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   const semesterData = await academicSemesterModel.findById({
     _id: studentData.admissionSemester,

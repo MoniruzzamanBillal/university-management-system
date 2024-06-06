@@ -7,6 +7,7 @@ import { TStudent } from "./student.interface";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { studentSearchableFields } from "./student.constant";
 
+// ! get all student from database
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(StudentModel.find(), query)
     .search(studentSearchableFields)
@@ -27,6 +28,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   return result;
 };
 
+// ! get particular student from database
 const getSingleStudentFromDB = async (id: string) => {
   const result = await StudentModel.findById({ _id: id })
     .populate("user")
@@ -40,6 +42,7 @@ const getSingleStudentFromDB = async (id: string) => {
   return result;
 };
 
+// ! delete particular student from database
 const deleteStudentFromDB = async (id: string) => {
   const session = await mongoose.startSession();
 
@@ -82,6 +85,7 @@ const deleteStudentFromDB = async (id: string) => {
   }
 };
 
+// ! update  particular student from database
 const updateStudentFromDb = async (id: string, payload: Partial<TStudent>) => {
   const { name, localGuardian, guardian, ...remainingStudentData } = payload;
 
