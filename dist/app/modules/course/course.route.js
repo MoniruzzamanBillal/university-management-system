@@ -13,6 +13,7 @@ router.post("/create-course", (0, validaateRequest_1.default)(course_validation_
 router.get("/allCourses", course_controller_1.courseContriollers.getAllCourses);
 router.get("/:id", course_controller_1.courseContriollers.getCourse);
 router.patch("/:id", (0, validaateRequest_1.default)(course_validation_1.courseValidations.updateCourseValidationSchema), course_controller_1.courseContriollers.updateCourseInfo);
-router.put("/:courseId/assign-faculty", (0, validaateRequest_1.default)(course_validation_1.courseValidations.addFacultyValidationSchema), course_controller_1.courseContriollers.assignFacultyToCourse);
+router.put("/:courseId/assign-faculty", (0, validaateRequest_1.default)(course_validation_1.courseValidations.FacultyValidationSchema), course_controller_1.courseContriollers.assignFacultyToCourse);
+router.delete("/:courseId/remove-faculty", (0, validaateRequest_1.default)(course_validation_1.courseValidations.FacultyValidationSchema), course_controller_1.courseContriollers.removeFacultyToCourse);
 router.delete("/:id", course_controller_1.courseContriollers.deleteCourse);
 exports.courseRouter = router;

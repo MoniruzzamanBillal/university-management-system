@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.courseValidations = exports.addFacultyValidationSchema = void 0;
+exports.courseValidations = exports.FacultyValidationSchema = void 0;
 const zod_1 = require("zod");
 // Zod schema for TPreRequisitCourses
 const createPreRequisiteCourseSchema = zod_1.z.object({
@@ -48,7 +48,7 @@ const updateCourseValidationSchema = zod_1.z.object({
         isDeleted: zod_1.z.boolean().optional(),
     }),
 });
-exports.addFacultyValidationSchema = zod_1.z.object({
+exports.FacultyValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
         course: zod_1.z.string().optional(),
         faculties: zod_1.z.array(zod_1.z.string()),
@@ -58,5 +58,5 @@ exports.addFacultyValidationSchema = zod_1.z.object({
 exports.courseValidations = {
     createCourseValidationSchema,
     updateCourseValidationSchema,
-    addFacultyValidationSchema: exports.addFacultyValidationSchema,
+    FacultyValidationSchema: exports.FacultyValidationSchema,
 };

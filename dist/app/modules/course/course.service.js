@@ -123,6 +123,13 @@ const assignFacultyWithCourseIntoDb = (id, payload) => __awaiter(void 0, void 0,
     }, { upsert: true, new: true });
     return result;
 });
+// ! remove faculty from course
+const removeFacultyWithCourseIntoDb = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = course_model_1.courseFacultyModel.findByIdAndUpdate(id, {
+        $pull: { faculties: { $in: payload } },
+    }, { new: true, runValidators: true });
+    return result;
+});
 //
 exports.courseServices = {
     createCourseIntoDb,
@@ -131,4 +138,5 @@ exports.courseServices = {
     updateCourseDataIntoDb,
     deleteCourseFromDb,
     assignFacultyWithCourseIntoDb,
+    removeFacultyWithCourseIntoDb,
 };

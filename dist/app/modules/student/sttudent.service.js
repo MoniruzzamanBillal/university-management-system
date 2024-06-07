@@ -31,6 +31,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const user_model_1 = require("../user/user.model");
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const student_constant_1 = require("./student.constant");
+// ! get all student from database
 const getAllStudentsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const studentQuery = new QueryBuilder_1.default(student_model_1.StudentModel.find(), query)
         .search(student_constant_1.studentSearchableFields)
@@ -49,6 +50,7 @@ const getAllStudentsFromDB = (query) => __awaiter(void 0, void 0, void 0, functi
     });
     return result;
 });
+// ! get particular student from database
 const getSingleStudentFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield student_model_1.StudentModel.findById({ _id: id })
         .populate("user")
@@ -61,6 +63,7 @@ const getSingleStudentFromDB = (id) => __awaiter(void 0, void 0, void 0, functio
     });
     return result;
 });
+// ! delete particular student from database
 const deleteStudentFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     try {
@@ -84,6 +87,7 @@ const deleteStudentFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
         throw new AppError_1.default(http_status_1.default.NOT_MODIFIED, "unsuccessfull deletation of user and student !!  ");
     }
 });
+// ! update  particular student from database
 const updateStudentFromDb = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, localGuardian, guardian } = payload, remainingStudentData = __rest(payload, ["name", "localGuardian", "guardian"]);
     const modifiedData = Object.assign({}, remainingStudentData);

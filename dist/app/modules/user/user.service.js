@@ -24,7 +24,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const admin_model_1 = require("../Admin/admin.model");
 const academicDepartment_model_1 = require("../academicDepartment/academicDepartment.model");
 const faculty_model_1 = require("../Faculty/faculty.model");
-//! function for creating a student inot database
+//! function for creating a student into database
 const createStudentIntoDB = (password, studentData) => __awaiter(void 0, void 0, void 0, function* () {
     const semesterData = yield academicSemester_model_1.academicSemesterModel.findById({
         _id: studentData.admissionSemester,

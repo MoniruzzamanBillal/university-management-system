@@ -85,6 +85,18 @@ const assignFacultyToCourse = (0, catchAsync_1.default)((req, res) => __awaiter(
         data: result,
     });
 }));
+// ! remove faculty from course
+const removeFacultyToCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseId } = req.params;
+    const { faculties } = req.body;
+    const result = yield course_service_1.courseServices.removeFacultyWithCourseIntoDb(courseId, faculties);
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "Faculty removed from course successfully !!",
+        data: result,
+    });
+}));
 //
 exports.courseContriollers = {
     createCourse,
@@ -93,4 +105,5 @@ exports.courseContriollers = {
     deleteCourse,
     updateCourseInfo,
     assignFacultyToCourse,
+    removeFacultyToCourse,
 };
