@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import AppError from "../../Error/AppError";
 import QueryBuilder from "../../builder/QueryBuilder";
-import { offeredCourseModel } from "./offeredCourses..model";
+import { offeredCourseModel } from "./offeredCourses.model";
 import { TOfferedCourse } from "./offeredCourses.interface";
 import { semesterRegistrationModel } from "../semesterRegistration/semesterRegistration.model.";
 import { academicFacultyModel } from "../academicFaculty/academicFaculty.model";
@@ -56,6 +56,33 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const isCourseExist = await courseModel.findById(course);
   if (!isCourseExist) {
     throw new AppError(httpStatus.NOT_FOUND, "course is not not exist !! ");
+  }
+
+  //  * depart belong to academic faculty
+  const isDepartmentBelongToFaculty = await academicDepartmentModel.findOne({
+    _id: academicDepartment,
+    academicFaculty,
+  });
+
+  if (!isDepartmentBelongToFaculty) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `this '${isAcademicDepartmentExist?.name}' is not belong to this '${isAcademicFacultyExist?.name}' `
+    );
+  }
+
+  // * check duplicate section number
+  const isDuplicateSectionExist = await offeredCourseModel.findOne({
+    semesterRegistration,
+    course,
+    section,
+  });
+
+  if (isDuplicateSectionExist) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `this '${section}' section is already exist!! `
+    );
   }
 
   const result = await offeredCourseModel.create({
