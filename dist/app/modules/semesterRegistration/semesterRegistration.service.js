@@ -18,6 +18,7 @@ const AppError_1 = __importDefault(require("../../Error/AppError"));
 const semesterRegistration_model_1 = require("./semesterRegistration.model.");
 const academicSemester_model_1 = require("../academicSemester/academicSemester.model");
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const semesterRegistration_constant_1 = require("./semesterRegistration.constant");
 // ! create  new semester registration into db
 const createSemesterRegistrationIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const academicSemester = payload === null || payload === void 0 ? void 0 : payload.academicSemester;
@@ -26,7 +27,10 @@ const createSemesterRegistrationIntoDB = (payload) => __awaiter(void 0, void 0, 
     });
     //  * check if there is any 'upcoming' or 'ingoing' semester
     const isThereUpcomingOrOngoingSemester = yield semesterRegistration_model_1.semesterRegistrationModel.findOne({
-        $or: [{ status: "UPCOMING" }, { status: "ONGOING" }],
+        $or: [
+            { status: semesterRegistration_constant_1.RegistrationStatus.UPCOMING },
+            { status: semesterRegistration_constant_1.RegistrationStatus.ONGOING },
+        ],
     });
     if (isThereUpcomingOrOngoingSemester) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `There is already ${isThereUpcomingOrOngoingSemester === null || isThereUpcomingOrOngoingSemester === void 0 ? void 0 : isThereUpcomingOrOngoingSemester.status} registered semester !! `);
@@ -65,14 +69,26 @@ const getSingleSemesterRegistrationsFromDB = (id) => __awaiter(void 0, void 0, v
 const updateSemesterRegistrationIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // * check academic semester exist
     const isSemesterRegistrationExist = yield semesterRegistration_model_1.semesterRegistrationModel.findById(id);
+    const requestedStatus = payload === null || payload === void 0 ? void 0 : payload.status;
     if (!isSemesterRegistrationExist) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "This  semester is not registered !! ");
     }
     // * check if requested data is ended or not
-    const requestedSemester = isSemesterRegistrationExist === null || isSemesterRegistrationExist === void 0 ? void 0 : isSemesterRegistrationExist.status;
-    if (requestedSemester === "ENDED") {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `this semester is already ${requestedSemester} `);
+    const currentSemesterStatus = isSemesterRegistrationExist === null || isSemesterRegistrationExist === void 0 ? void 0 : isSemesterRegistrationExist.status;
+    if (currentSemesterStatus === semesterRegistration_constant_1.RegistrationStatus.ENDED) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `this semester is already ${currentSemesterStatus} `);
     }
+    if (currentSemesterStatus === semesterRegistration_constant_1.RegistrationStatus.UPCOMING &&
+        requestedStatus === semesterRegistration_constant_1.RegistrationStatus.ENDED) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `You can't directly change status from  ${currentSemesterStatus} to ${requestedStatus}  `);
+    }
+    if (currentSemesterStatus === semesterRegistration_constant_1.RegistrationStatus.ONGOING &&
+        requestedStatus === semesterRegistration_constant_1.RegistrationStatus.UPCOMING) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `You can't directly change status from  ${currentSemesterStatus} to ${requestedStatus}  `);
+    }
+    // upcoming --> ongoing --> ended
+    const result = yield semesterRegistration_model_1.semesterRegistrationModel.findByIdAndUpdate(id, payload, { new: true });
+    return result;
     //
 });
 // ! delete  particular semester registration data into db

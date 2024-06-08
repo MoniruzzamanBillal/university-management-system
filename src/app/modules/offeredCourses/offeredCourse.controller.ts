@@ -53,12 +53,15 @@ const getSingleOfferedCourses = catchAsync(async (req, res) => {
 // ! update offered course
 const updateOfferedCourse = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await offeredCourseServices.updateOfferedCourseIntoDB(id);
+  const result = await offeredCourseServices.updateOfferedCourseIntoDB(
+    id,
+    req.body
+  );
 
   sendResponse(res, {
     status: httpStatus.OK,
     success: true,
-    message: "Offered Course is created successfully !",
+    message: "Offered Course updated successfully !",
     data: result,
   });
 });
@@ -71,7 +74,7 @@ const deleteOfferedCourseFromDB = catchAsync(async (req, res) => {
   sendResponse(res, {
     status: httpStatus.OK,
     success: true,
-    message: "Offered Course is created successfully !",
+    message: "Offered Course is deletetd successfully !",
     data: result,
   });
 });
