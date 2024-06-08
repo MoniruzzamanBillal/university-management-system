@@ -80,13 +80,13 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   //set faculty role
   userData.role = "faculty";
 
-  // find academic department info
+  // * find academic department info
   const academicDepartment = await academicDepartmentModel.findById(
     payload.academicDepartment
   );
 
   if (!academicDepartment) {
-    throw new AppError(400, "Academic department not found");
+    throw new AppError(httpStatus.NOT_FOUND, "Academic department not found");
   }
 
   const session = await mongoose.startSession();
@@ -96,10 +96,10 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     //set  generated id
     userData.id = await generateFacultyId();
 
-    // create a user (transaction-1)
+    // * create a user (transaction-1)
     const newUser = await userModel.create([userData], { session }); // array
 
-    //create a faculty
+    // * create a faculty
     if (!newUser.length) {
       throw new AppError(httpStatus.BAD_REQUEST, "Failed to create user");
     }

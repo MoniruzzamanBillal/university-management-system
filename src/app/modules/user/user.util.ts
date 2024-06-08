@@ -40,7 +40,7 @@ export const generateStudentId = async (payload: Tacademicsemester) => {
   return `${currentYear}${payload.code}${incrementId}`;
 };
 
-// Faculty ID
+//! last Faculty ID
 export const findLastFacultyId = async () => {
   const lastFaculty = await userModel
     .findOne(
@@ -75,7 +75,7 @@ export const generateFacultyId = async () => {
   return incrementId;
 };
 
-// Admin ID
+//! last Admin ID
 export const findLastAdminId = async () => {
   const lastAdmin = await userModel
     .findOne(
