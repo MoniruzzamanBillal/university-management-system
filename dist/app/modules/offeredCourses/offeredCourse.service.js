@@ -114,7 +114,7 @@ const getSingleOfferedCourseFromDB = (id) => __awaiter(void 0, void 0, void 0, f
 });
 // ! update course from database
 const updateOfferedCourseIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { faculty, days, startTime, endTime, maxCapacity } = payload;
+    const { faculty, days, startTime, endTime } = payload;
     // * check if registeded semester  exist
     const isOfferedCourseExits = yield offeredCourses_model_1.offeredCourseModel.findById(id);
     const semesterRegistration = isOfferedCourseExits === null || isOfferedCourseExits === void 0 ? void 0 : isOfferedCourseExits.semesterRegistration;
@@ -126,7 +126,7 @@ const updateOfferedCourseIntoDB = (id, payload) => __awaiter(void 0, void 0, voi
     const registeredSemester = yield semesterRegistration_model_1.semesterRegistrationModel.findById(semesterRegistration);
     if (registeredSemester &&
         (registeredSemester === null || registeredSemester === void 0 ? void 0 : registeredSemester.status) !== semesterRegistration_constant_1.RegistrationStatus.UPCOMING) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, " This semester can not be modified  !! ");
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, ` '${registeredSemester === null || registeredSemester === void 0 ? void 0 : registeredSemester.status}' semester can not be modified !!  `);
     }
     // * check if Faculty  exist
     const isFacultyExist = yield faculty_model_1.facultyModel.findById(faculty);
@@ -154,12 +154,30 @@ const updateOfferedCourseIntoDB = (id, payload) => __awaiter(void 0, void 0, voi
     if (hasScheduleConglict) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "This faculty is not availavle at that time !! ");
     }
-    return null;
+    const result = yield offeredCourses_model_1.offeredCourseModel.findByIdAndUpdate(id, payload, {
+        new: true,
+    });
+    return result;
     //
 });
 // ! delete course from database
 const deleteOfferedCourseFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(id);
+    // * check if registeded semester  exist
+    const isOfferedCourseExits = yield offeredCourses_model_1.offeredCourseModel.findById(id);
+    //  * check if offered course is exist or not
+    if (!isOfferedCourseExits) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Offered course not found  !! ");
+    }
+    const semesterRegistration = isOfferedCourseExits === null || isOfferedCourseExits === void 0 ? void 0 : isOfferedCourseExits.semesterRegistration;
+    const registeredSemester = yield semesterRegistration_model_1.semesterRegistrationModel.findById(semesterRegistration);
+    const registeredSemesterStatus = registeredSemester === null || registeredSemester === void 0 ? void 0 : registeredSemester.status;
+    if (registeredSemester &&
+        registeredSemesterStatus !== semesterRegistration_constant_1.RegistrationStatus.UPCOMING) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, ` '${registeredSemesterStatus}' semester can not be deleteed !!  `);
+    }
+    const result = yield offeredCourses_model_1.offeredCourseModel.findByIdAndDelete(id);
+    return result;
 });
 exports.offeredCourseServices = {
     createOfferedCourseIntoDB,

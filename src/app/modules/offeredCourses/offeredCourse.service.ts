@@ -161,7 +161,7 @@ const updateOfferedCourseIntoDB = async (
     "faculty" | "days" | "startTime" | "endTime" | "maxCapacity"
   >
 ) => {
-  const { faculty, days, startTime, endTime, maxCapacity } = payload;
+  const { faculty, days, startTime, endTime } = payload;
 
   // * check if registeded semester  exist
   const isOfferedCourseExits = await offeredCourseModel.findById(id);
@@ -183,7 +183,7 @@ const updateOfferedCourseIntoDB = async (
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      " This semester can not be modified  !! "
+      ` '${registeredSemester?.status}' semester can not be modified !!  `
     );
   }
 
@@ -221,7 +221,11 @@ const updateOfferedCourseIntoDB = async (
     );
   }
 
-  return null;
+  const result = await offeredCourseModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+  return result;
+
   //
 };
 

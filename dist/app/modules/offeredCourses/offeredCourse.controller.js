@@ -68,7 +68,7 @@ const deleteOfferedCourseFromDB = (0, catchAsync_1.default)((req, res) => __awai
     (0, sendResponse_1.default)(res, {
         status: http_status_1.default.OK,
         success: true,
-        message: "Offered Course is created successfully !",
+        message: "Offered Course is deletetd successfully !",
         data: result,
     });
 }));

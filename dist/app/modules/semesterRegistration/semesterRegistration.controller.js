@@ -61,11 +61,13 @@ const updateSemesterRegistration = (0, catchAsync_1.default)((req, res) => __awa
 }));
 // ! delete   particular  semester registration data
 const deleteSemesterRegistration = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield semesterRegistration_service_1.semesterRegistrationServices.deleteSemesterRegistrationFromDB(id);
     (0, sendResponse_1.default)(res, {
         status: http_status_1.default.OK,
         success: true,
         message: "Delete registration semester successfully !!",
-        data: "result",
+        data: result,
     });
 }));
 //
