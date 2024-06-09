@@ -13,9 +13,12 @@ const userSchema = new Schema<Tuser, TUSerModel>(
     password: {
       type: String,
     },
+    passwordChangedAt: {
+      type: Date,
+    },
     needsPasswordChange: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     role: {
       type: String,
@@ -52,16 +55,16 @@ userSchema.post("save", function (doc, next) {
 
 //! statics to check user with custom id
 userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-  return await userModel.findOne({ id });
+  return await userModel.findOne({ id }).select("+password");
 };
 
-//! statics to check user with custom id
+//! statics to check user is deleted
 userSchema.statics.isUserDeleted = async function (id: string) {
   const user = await userModel.findOne({ id });
   return user?.isDeleted;
 };
 
-//! statics to check user with custom id
+//! statics to get user status
 userSchema.statics.getUserStatus = async function (id: string) {
   const user = await userModel.findOne({ id });
   return user?.status;

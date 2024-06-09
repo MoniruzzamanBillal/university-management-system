@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../util/catchAsync";
 import { FacultyServices } from "./faculty.service";
 import sendResponse from "../../util/sendResponse";
-
+//  ! get single  faculty
 const getSingleFaculty = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await FacultyServices.getSingleFacultyFromDB(id);
@@ -14,6 +14,8 @@ const getSingleFaculty = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+//  ! get all faculty
 
 const getAllFaculties = catchAsync(async (req, res) => {
   const result = await FacultyServices.getAllFacultiesFromDB(req.query);

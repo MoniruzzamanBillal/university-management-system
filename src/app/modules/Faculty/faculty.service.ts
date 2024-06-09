@@ -22,7 +22,7 @@ const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
 
 // ! get single faculty from database
 const getSingleFacultyFromDB = async (id: string) => {
-  const result = await facultyModel.findById(id).populate("AcademicDepartment");
+  const result = await facultyModel.findById(id).populate("academicDepartment");
 
   return result;
 };
