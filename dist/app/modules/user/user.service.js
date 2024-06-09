@@ -72,19 +72,19 @@ const createFacultyIntoDB = (password, payload) => __awaiter(void 0, void 0, voi
     userData.password = password || config_1.default.defaultPassword;
     //set faculty role
     userData.role = "faculty";
-    // find academic department info
+    // * find academic department info
     const academicDepartment = yield academicDepartment_model_1.academicDepartmentModel.findById(payload.academicDepartment);
     if (!academicDepartment) {
-        throw new AppError_1.default(400, "Academic department not found");
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Academic department not found");
     }
     const session = yield mongoose_1.default.startSession();
     try {
         session.startTransaction();
         //set  generated id
         userData.id = yield (0, user_util_1.generateFacultyId)();
-        // create a user (transaction-1)
+        // * create a user (transaction-1)
         const newUser = yield user_model_1.userModel.create([userData], { session }); // array
-        //create a faculty
+        // * create a faculty
         if (!newUser.length) {
             throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Failed to create user");
         }

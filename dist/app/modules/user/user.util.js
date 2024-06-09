@@ -38,7 +38,7 @@ const generateStudentId = (payload) => __awaiter(void 0, void 0, void 0, functio
     return `${currentYear}${payload.code}${incrementId}`;
 });
 exports.generateStudentId = generateStudentId;
-// Faculty ID
+//! last Faculty ID
 const findLastFacultyId = () => __awaiter(void 0, void 0, void 0, function* () {
     const lastFaculty = yield user_model_1.userModel
         .findOne({
@@ -65,7 +65,7 @@ const generateFacultyId = () => __awaiter(void 0, void 0, void 0, function* () {
     return incrementId;
 });
 exports.generateFacultyId = generateFacultyId;
-// Admin ID
+//! last Admin ID
 const findLastAdminId = () => __awaiter(void 0, void 0, void 0, function* () {
     const lastAdmin = yield user_model_1.userModel
         .findOne({
