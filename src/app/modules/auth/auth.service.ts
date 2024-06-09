@@ -3,6 +3,8 @@ import AppError from "../../Error/AppError";
 import { userModel } from "../user/user.model";
 import { TLoginuser } from "./auth.interface";
 import bcrypt from "bcrypt";
+import Jwt from "jsonwebtoken";
+import config from "../../config";
 
 //  ! login
 const loginUser = async (payload: TLoginuser) => {
@@ -36,12 +38,26 @@ const loginUser = async (payload: TLoginuser) => {
   );
 
   if (!isPasswordMatch) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Password don't match !!");
+    throw new AppError(httpStatus.FORBIDDEN, "Password don't match !!");
   }
 
-  // * grant access token and refresh token
+  // * create token
+  const jwtPayload = {
+    // id: user.id,
+    userId: user,
+    role: user.role,
+  };
+  const accessToken = Jwt.sign(jwtPayload, config.jwt_secret as string, {
+    expiresIn: "10d",
+  });
 
-  return null;
+  console.log("token = ");
+  console.log(accessToken);
+
+  return {
+    accessToken,
+    needsPasswordChange: user.needsPasswordChange,
+  };
 };
 
 export const authServices = {
