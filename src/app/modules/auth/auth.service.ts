@@ -5,6 +5,7 @@ import { TChangePassowrd, TLoginuser } from "./auth.interface";
 import bcrypt from "bcrypt";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
+import createToken from "./auth.util";
 
 //  ! login
 const loginUser = async (payload: TLoginuser) => {
@@ -47,12 +48,20 @@ const loginUser = async (payload: TLoginuser) => {
     role: user.role,
   };
 
-  const accessToken = Jwt.sign(jwtPayload, config.jwt_secret as string, {
-    expiresIn: "10d",
-  });
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_secret as string,
+    "1d"
+  );
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_secret as string,
+    "10d"
+  );
 
   return {
     accessToken,
+    refreshToken,
     needsPasswordChange: user.needsPasswordChange,
   };
 };
@@ -93,7 +102,60 @@ const changePassword = async (
   return null;
 };
 
+// ! refresh token
+const refreshToken = async (token: string) => {
+  //  * check if refresh token is valid
+  const decoded = Jwt.verify(token, config.jwt_secret as string) as JwtPayload;
+
+  const { userId, iat } = decoded;
+
+  //  * checking if the user is exist
+  const user = await userModel.isUserExistsByCustomId(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
+  }
+
+  // *  checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
+  }
+
+  // *  checking if the user is blocked
+  const userStatus = user?.status;
+
+  if (userStatus === "blocked") {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+  }
+
+  if (
+    user.passwordChangedAt &&
+    (await userModel.isJWTissuedBeforePasswordChange(
+      user.passwordChangedAt,
+      iat as number
+    ))
+  ) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized !");
+  }
+
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  };
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_secret as string,
+    "1d"
+  );
+
+  return {
+    accessToken,
+  };
+};
+
 export const authServices = {
   loginUser,
   changePassword,
+  refreshToken,
 };

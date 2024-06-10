@@ -5,12 +5,14 @@ import morgan from "morgan";
 import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
 import { mainRouter } from "./app/routes";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
 
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+app.use(cookieParser());
 
 // ! rouutes
 
