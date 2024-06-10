@@ -15,6 +15,10 @@ export interface TUSerModel extends Model<Tuser> {
   isUserExistsByCustomId(id: string): Promise<Tuser>;
   isUserDeleted(id: string): Promise<boolean>;
   getUserStatus(id: string): Promise<"in-progress" | "blocked" | null>;
+  isJWTissuedBeforePasswordChange(
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimeStamp: number
+  ): boolean;
 }
 
 export type TUserRole = keyof typeof UserRole;

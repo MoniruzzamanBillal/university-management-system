@@ -70,4 +70,15 @@ userSchema.statics.getUserStatus = async function (id: string) {
   return user?.status;
 };
 
+//! statics to check if jwt created before password change
+userSchema.statics.isJWTissuedBeforePasswordChange = async function (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimeStamp: number
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+
+  return passwordChangedTime > jwtIssuedTimeStamp;
+};
+
 export const userModel = model<Tuser, TUSerModel>("User", userSchema);

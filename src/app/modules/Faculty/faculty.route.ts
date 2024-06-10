@@ -3,6 +3,7 @@ import { FacultyControllers } from "./faculty.controller";
 import validateRequest from "../../middleware/validaateRequest";
 import { updateFacultyValidationSchema } from "./faculty.validation";
 import authValidation from "../../middleware/authValidation";
+import { UserRole } from "../user/user.constant";
 
 const router = Router();
 
@@ -16,6 +17,10 @@ router.patch(
 
 router.delete("/:id", FacultyControllers.deleteFaculty);
 
-router.get("/", authValidation(), FacultyControllers.getAllFaculties);
+router.get(
+  "/",
+  authValidation(UserRole.admin, UserRole.faculty),
+  FacultyControllers.getAllFaculties
+);
 
 export const FacultyRouter = router;

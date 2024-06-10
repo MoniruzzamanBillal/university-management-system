@@ -21,6 +21,7 @@ router.post(
 // ! for creating a faculty
 router.post(
   "/create-faculty",
+  authValidation(UserRole.admin),
   validateRequest(createFacultyValidationSchema),
   userController.createFaculty
 );
@@ -28,6 +29,7 @@ router.post(
 // ! for creating a admin
 router.post(
   "/create-admin",
+  authValidation(UserRole.admin),
   validateRequest(createAdminValidationSchema),
   userController.createAdmin
 );
