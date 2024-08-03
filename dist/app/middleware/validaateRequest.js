@@ -8,18 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const catchAsync_1 = __importDefault(require("../util/catchAsync"));
 const validateRequest = (Schema) => {
-    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            yield Schema.parseAsync({
-                body: req.body,
-            });
-            next();
-        }
-        catch (error) {
-            next(error);
-        }
-    });
+    return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        yield Schema.parseAsync({
+            body: req.body,
+            cookies: req.cookies,
+        });
+        next();
+    }));
 };
 exports.default = validateRequest;

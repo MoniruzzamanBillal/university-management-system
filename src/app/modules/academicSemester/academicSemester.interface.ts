@@ -15,7 +15,7 @@ export type Tmonths =
   | "December";
 
 export type TacademicSemesterName = "spring" | "summer" | "fall";
-export type TacademicSemesterCode = "10" | "20" | "30";
+export type TacademicSemesterCode = "01" | "02" | "03";
 
 export type Tacademicsemester = {
   _id?: Types.ObjectId;

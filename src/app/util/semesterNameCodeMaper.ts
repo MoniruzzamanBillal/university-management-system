@@ -3,7 +3,7 @@ type TsemesterNameCodeType = {
 };
 
 export const semesterNameCodeMaper: TsemesterNameCodeType = {
-  spring: "10",
-  summer: "20",
-  fall: "30",
+  spring: "01",
+  summer: "02",
+  fall: "03",
 };

@@ -17,11 +17,12 @@ const authValidation = (...requiredRoles: TUserRole[]) => {
     }
 
     // *  verify the token
-
-    const decoded = Jwt.verify(
-      token,
-      config.jwt_secret as string
-    ) as JwtPayload;
+    let decoded;
+    try {
+      decoded = Jwt.verify(token, config.jwt_secret as string) as JwtPayload;
+    } catch (error: any) {
+      throw new AppError(httpStatus.UNAUTHORIZED, error);
+    }
 
     const { role, userId, iat } = decoded;
 
@@ -60,7 +61,6 @@ const authValidation = (...requiredRoles: TUserRole[]) => {
           iat as number
         );
 
-      console.log(jwtAfterPasswordUpdate);
       if (jwtAfterPasswordUpdate) {
         throw new AppError(
           httpStatus.UNAUTHORIZED,

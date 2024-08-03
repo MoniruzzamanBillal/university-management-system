@@ -70,7 +70,6 @@ const globalErrorHandler: ErrorRequestHandler = async (
     success: false,
     message,
     errorSources,
-    //  error,
     stack: config.node_env === "development" ? error?.stack : null,
   });
 };

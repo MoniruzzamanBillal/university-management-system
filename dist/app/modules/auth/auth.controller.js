@@ -20,13 +20,44 @@ const auth_service_1 = require("./auth.service");
 // ! login
 const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.authServices.loginUser(req.body);
+    const { refreshToken, accessToken, needsPasswordChange } = result;
+    res.cookie("refreshToken", refreshToken, {
+        secure: false,
+        httpOnly: false,
+    });
     (0, sendResponse_1.default)(res, {
         status: http_status_1.default.OK,
         success: true,
         message: "User is logged in succesfully!",
+        data: {
+            accessToken,
+            needsPasswordChange,
+        },
+    });
+}));
+//  ! change password
+const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield auth_service_1.authServices.changePassword(req.user, req.body);
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "Password changed succesfully!",
+        data: null,
+    });
+}));
+// ! refresh token
+const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.cookies;
+    const result = yield auth_service_1.authServices.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, {
+        status: http_status_1.default.OK,
+        success: true,
+        message: "Access token is retrieved succesfully!",
         data: result,
     });
 }));
 exports.authController = {
     loginUser,
+    changePassword,
+    refreshToken,
 };

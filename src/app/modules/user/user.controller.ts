@@ -3,14 +3,16 @@ import sendResponse from "../../util/sendResponse";
 import httpStatus from "http-status";
 import catchAsync from "../../util/catchAsync";
 import { userModel } from "./user.model";
-import AppError from "../../Error/AppError";
 
 // ! function for creating a student
 const createStudent = catchAsync(async (req, res) => {
   const { password, student: studentData } = req.body;
 
-  const result = await userServices.createStudentIntoDB(password, studentData);
-  console.log(result);
+  const result = await userServices.createStudentIntoDB(
+    password,
+    studentData,
+    req.file
+  );
 
   sendResponse(res, {
     status: httpStatus.OK,

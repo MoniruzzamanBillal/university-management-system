@@ -21,7 +21,6 @@ const createOfferedCourseValidationSchema = z.object({
       faculty: z.string(),
       section: z.number(),
       maxCapacity: z.number(),
-      // days: z.array(z.enum([...Days] as [String , ...String[]] )),
       days: z.array(z.enum(Days)),
       startTime: timeStringSchema, // HH: MM   00-23: 00-59
       endTime: timeStringSchema,

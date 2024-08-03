@@ -17,6 +17,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../util/catchAsync"));
 const faculty_service_1 = require("./faculty.service");
 const sendResponse_1 = __importDefault(require("../../util/sendResponse"));
+//  ! get single  faculty
 const getSingleFaculty = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield faculty_service_1.FacultyServices.getSingleFacultyFromDB(id);
@@ -27,7 +28,9 @@ const getSingleFaculty = (0, catchAsync_1.default)((req, res) => __awaiter(void 
         data: result,
     });
 }));
+//  ! get all faculty
 const getAllFaculties = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.cookies);
     const result = yield faculty_service_1.FacultyServices.getAllFacultiesFromDB(req.query);
     (0, sendResponse_1.default)(res, {
         status: http_status_1.default.OK,

@@ -18,10 +18,12 @@ const morgan_1 = __importDefault(require("morgan"));
 const globalErrorHandler_1 = __importDefault(require("./app/middleware/globalErrorHandler"));
 const http_status_1 = __importDefault(require("http-status"));
 const routes_1 = require("./app/routes");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use((0, morgan_1.default)("dev"));
+app.use((0, cookie_parser_1.default)());
 // ! rouutes
 app.use("/api/v1", routes_1.mainRouter);
 app.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

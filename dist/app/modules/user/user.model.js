@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userModel = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const mongoose_1 = __importStar(require("mongoose"));
+const mongoose_1 = require("mongoose");
 const config_1 = __importDefault(require("../../config"));
 const userSchema = new mongoose_1.Schema({
     id: {
@@ -48,9 +25,12 @@ const userSchema = new mongoose_1.Schema({
     password: {
         type: String,
     },
+    passwordChangedAt: {
+        type: Date,
+    },
     needsPasswordChange: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     role: {
         type: String,
@@ -77,4 +57,31 @@ userSchema.post("save", function (doc, next) {
     doc.password = "";
     next();
 });
-exports.userModel = mongoose_1.default.model("User", userSchema);
+//! statics to check user with custom id
+userSchema.statics.isUserExistsByCustomId = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield exports.userModel.findOne({ id }).select("+password");
+    });
+};
+//! statics to check user is deleted
+userSchema.statics.isUserDeleted = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield exports.userModel.findOne({ id });
+        return user === null || user === void 0 ? void 0 : user.isDeleted;
+    });
+};
+//! statics to get user status
+userSchema.statics.getUserStatus = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield exports.userModel.findOne({ id });
+        return user === null || user === void 0 ? void 0 : user.status;
+    });
+};
+//! statics to check if jwt created before password change
+userSchema.statics.isJWTissuedBeforePasswordChange = function (passwordChangedTimestamp, jwtIssuedTimeStamp) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
+        return passwordChangedTime > jwtIssuedTimeStamp;
+    });
+};
+exports.userModel = (0, mongoose_1.model)("User", userSchema);

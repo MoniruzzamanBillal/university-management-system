@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import AppError from "../../Error/AppError";
 import config from "../../config";
@@ -16,9 +17,14 @@ import { adminModel } from "../Admin/admin.model";
 import { academicDepartmentModel } from "../academicDepartment/academicDepartment.model";
 import { TFaculty } from "../Faculty/faculty.interface";
 import { facultyModel } from "../Faculty/faculty.model";
+import { SendImageCloudinary } from "../../util/SendImageCloudinary";
 
 //! function for creating a student into database
-const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+const createStudentIntoDB = async (
+  password: string,
+  studentData: TStudent,
+  file: any
+) => {
   const semesterData = await academicSemesterModel.findById({
     _id: studentData.admissionSemester,
   });
@@ -30,6 +36,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
 
   userData.password = password || (config.defaultPassword as string);
   userData.role = "student";
+  userData.email = studentData.email;
 
   const session = await mongoose.startSession();
 
@@ -48,6 +55,13 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     studentData.id = newUser[0].id;
     studentData.user = newUser[0]._id;
 
+    const name = `${studentData?.name?.firstName}${studentData.id}`;
+    const path = file?.path;
+
+    const imgResult = await SendImageCloudinary(path, name);
+
+    studentData.profileImg = imgResult?.secure_url;
+
     //* create a student // transaction 2
     const newStudent = await StudentModel.create([studentData], { session });
     if (!newStudent.length) {
@@ -61,7 +75,6 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
-    console.log(error);
 
     throw new AppError(httpStatus.NOT_ACCEPTABLE, error);
   }
@@ -79,6 +92,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
   //set faculty role
   userData.role = "faculty";
+  userData.email = payload.email;
 
   // * find academic department info
   const academicDepartment = await academicDepartmentModel.findById(
@@ -133,6 +147,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
   userData.password = password || (config.defaultPassword as string);
   //set student role
   userData.role = "admin";
+  userData.email = payload.email;
 
   const session = await mongoose.startSession();
 

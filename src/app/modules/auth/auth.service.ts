@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import createToken from "./auth.util";
+import { sendEmail } from "../../util/sendEmail";
 
 //  ! login
 const loginUser = async (payload: TLoginuser) => {
@@ -51,7 +52,7 @@ const loginUser = async (payload: TLoginuser) => {
   const accessToken = createToken(
     jwtPayload,
     config.jwt_secret as string,
-    "1d"
+    "4d"
   );
   const refreshToken = createToken(
     jwtPayload,
@@ -154,8 +155,49 @@ const refreshToken = async (token: string) => {
   };
 };
 
+// ! forgot password
+const forgetPassword = async (userId: string) => {
+  const user = await userModel.isUserExistsByCustomId(userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
+  }
+  // * checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
+  }
+
+  // * checking if the user is blocked
+  const userStatus = user?.status;
+
+  if (userStatus === "blocked") {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+  }
+
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  };
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_secret as string,
+    "10m"
+  );
+
+  const resetUILink = `http://localhost:3000?id=${user.id}&token=${resetToken} `;
+
+  console.log(resetUILink);
+
+  sendEmail();
+
+  //
+};
+
 export const authServices = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
 };

@@ -24,4 +24,4 @@ export const academicSemesterName: TacademicSemesterName[] = [
   "summer",
   "fall",
 ];
-export const academicSemesterCode: TacademicSemesterCode[] = ["10", "20", "30"];
+export const academicSemesterCode: TacademicSemesterCode[] = ["01", "02", "03"];
